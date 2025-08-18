@@ -24,23 +24,56 @@ class Database {
 
 	createTables() {
 		return new Promise((resolve, reject) => {
-			const createUsersTable = `
-        CREATE TABLE IF NOT EXISTS users (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          name TEXT NOT NULL,
-          email TEXT UNIQUE NOT NULL,
-          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-      `;
+			const tables = [
+				// Users table
+				`CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`,
 
-			this.db.run(createUsersTable, (err) => {
-				if (err) {
-					console.error('Error creating users table:', err.message);
-					reject(err);
-				} else {
-					console.log('📋 Users table ready');
-					resolve();
-				}
+				// Projects table
+				`CREATE TABLE IF NOT EXISTS projects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    user_id INTEGER NOT NULL,
+    status TEXT DEFAULT 'active',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id)
+  )` ,
+
+				// Tasks table
+				`CREATE TABLE IF NOT EXISTS tasks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  description TEXT,
+  status TEXT DEFAULT 'pending',
+  priority TEXT DEFAULT 'medium',
+  project_id INTEGER NOT NULL,
+  assigned_to INTEGER,
+  due_date DATETIME,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (project_id) REFERENCES projects (id),
+  FOREIGN KEY (assigned_to) REFERENCES users (id)
+)`
+			];
+
+			let completed = 0;
+			tables.forEach((sql, index) => {
+				this.db.run(sql, (err) => {
+					if (err) {
+						console.error(`Error creating table ${index}:`, err.message);
+						reject(err);
+					} else {
+						completed++;
+						if (completed === tables.length) {
+							console.log('📋 Users, Projects and Tasks tables ready');
+							resolve();
+						}
+					}
+				});
 			});
 		});
 	}

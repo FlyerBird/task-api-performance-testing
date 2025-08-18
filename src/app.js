@@ -1,5 +1,7 @@
 const express = require('express');
 const userRoutes = require('./routes/users');
+const projectRoutes = require('./routes/projects');
+const taskRoutes = require('./routes/tasks');
 
 const app = express();
 
@@ -8,6 +10,8 @@ app.use(express.json());
 
 // API routes
 app.use('/api/users', userRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/tasks', taskRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -15,7 +19,9 @@ app.get('/', (req, res) => {
 		message: 'Task Management API is running!',
 		version: '1.0.0',
 		endpoints: {
-			users: '/api/users'
+			users: '/api/users',
+			projects: '/api/projects',
+			tasks: '/api/tasks'
 		},
 		timestamp: new Date().toISOString()
 	});
