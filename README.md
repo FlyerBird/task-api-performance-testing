@@ -93,7 +93,7 @@ CREATE TABLE tasks (
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/your-username/task-api-performance-testing.git
+git clone https://github.com/FlyerBird/task-api-performance-testing.git
 cd task-api-performance-testing
 ```
 
